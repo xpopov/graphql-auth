@@ -43,6 +43,9 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
         user: user
       }
     else
+      if user.present? && !user.valid_password?(password)
+        devise_failure(user.email, 'Password is not valid')
+      end
       {
         errors: [
           {

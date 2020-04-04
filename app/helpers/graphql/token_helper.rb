@@ -14,6 +14,12 @@ module Graphql
       # sign in via devise whenever we log in
       sign_in(user, scope: :user)
     end
+    
+    def devise_failure(email, reason)
+      request.params[:user] = { email: email }
+      opts = { message: reason, scope: :user }
+      Warden::Manager._run_callbacks(:before_failure, request.env, opts)
+    end
 
     def set_refresh_token(user, response)
       refresh_token = user.refresh_token.presence || GraphQL::Auth::JwtManager.issue_without_expiration({ user: user.id })

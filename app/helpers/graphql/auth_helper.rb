@@ -20,8 +20,22 @@ module Graphql
       return nil if authorization_token.nil?
 
       decrypted_token = GraphQL::Auth::JwtManager.decode(authorization_token)
+      expiration = GraphQL::Auth::JwtManager.token_expiration(authorization_token)
       user = User.find_by id: decrypted_token['user']
-      return nil if user.blank? || account_locked?(user)
+      if user.present?
+        reason = nil
+        if account_locked? user
+          reason = 'User locked'
+        elsif expiration.present?
+          reason = 'Token expired'
+        end
+        if reason.present?
+          devise_failure(user.email, reason)
+          return nil
+        end
+      else
+        return nil# user.blank?
+      end
       
       # update token if user is found with token
       generate_access_token(user, response)

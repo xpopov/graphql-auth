@@ -9,6 +9,11 @@ module Graphql
       response.set_header 'Authorization', token
       response.set_header 'Expires', GraphQL::Auth::JwtManager.token_expiration(token)
     end
+    
+    def devise_sign_in(user)
+      # sign in via devise whenever we log in
+      sign_in(user, scope: :user)
+    end
 
     def set_refresh_token(user, response)
       refresh_token = user.refresh_token.presence || GraphQL::Auth::JwtManager.issue_without_expiration({ user: user.id })

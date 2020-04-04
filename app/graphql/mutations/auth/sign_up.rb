@@ -25,6 +25,7 @@ class Mutations::Auth::SignUp < GraphQL::Schema::Mutation
 
     if user.save
       generate_access_token(user, response)
+      devise_sign_in(user)
 
       {
         errors: [],

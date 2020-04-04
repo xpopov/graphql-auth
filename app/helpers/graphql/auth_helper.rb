@@ -22,9 +22,11 @@ module Graphql
       decrypted_token = GraphQL::Auth::JwtManager.decode(authorization_token)
       user = User.find_by id: decrypted_token['user']
       return nil if user.blank? || account_locked?(user)
-
+      
       # update token if user is found with token
       generate_access_token(user, response)
+      
+      devise_sign_in(user)
 
       user
 
@@ -38,6 +40,8 @@ module Graphql
 
       generate_access_token(user, response)
       set_refresh_token(user, response)
+      
+      devise_sign_in(user)
 
       user
     end

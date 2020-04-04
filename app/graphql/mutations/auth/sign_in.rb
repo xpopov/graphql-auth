@@ -34,6 +34,7 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
     if valid_sign_in
       generate_access_token(user, response)
       set_current_user(user)
+      devise_sign_in(user)
       remember_me ? set_refresh_token(user, response) : delete_refresh_token(user)
 
       {

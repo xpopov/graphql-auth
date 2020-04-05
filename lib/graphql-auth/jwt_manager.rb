@@ -37,6 +37,8 @@ module GraphQL
                                        true,
                                        { algorithm: ALGORITHM }
           decrypted_token.first
+        rescue
+          {}
         end
 
         private

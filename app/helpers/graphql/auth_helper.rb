@@ -26,8 +26,6 @@ module Graphql
         reason = nil
         if account_locked? user
           reason = 'User locked'
-        elsif expiration.present?
-          reason = 'Token expired'
         end
         if reason.present?
           devise_failure(user.email, reason)

@@ -18,7 +18,7 @@ module Graphql
 
     # set current user from Authorization header
     def current_user
-      return @_current_user is @_current_user.present?
+      return @_current_user if @_current_user.present?
       authorization_token = request.headers['Authorization']
       return nil if authorization_token.nil?
 

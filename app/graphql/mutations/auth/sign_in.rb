@@ -68,8 +68,8 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
         errors: [
           {
             field: :_error,
-            message: I18n.t('devise.failure.invalid',
-                            authentication_keys: I18n.t('activerecord.attributes.user.email'))
+                message: I18n.t('devise.failure.invalid',
+                                authentication_keys: I18n.t('activerecord.attributes.user.email', default: 'email'))
           }
         ],
         success: false,

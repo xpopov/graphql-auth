@@ -12,7 +12,10 @@ module Graphql
     
     def devise_sign_in(user)
       # sign in via devise whenever we log in
-      sign_in(user, scope: :user)
+      # sign_in(user, scope: :user)
+      request = context[:request]
+      opts = { scope: :user }
+      Warden::Manager._run_callbacks(:after_set_user, user, request, opts)
     end
     
     def devise_failure(email, reason)

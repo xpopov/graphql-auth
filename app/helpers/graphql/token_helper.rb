@@ -34,5 +34,13 @@ module Graphql
     def delete_refresh_token(user)
       user.update_column :refresh_token, nil if user.refresh_token.present?
     end
+    
+    def set_google_secret(user)
+      user.set_google_secret
+    end
+    
+    def verify_google_code(user, code)
+      user.google_authentic?(code)
+    end
   end
 end

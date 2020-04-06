@@ -8,6 +8,7 @@ module GraphQL
                     :allow_sign_up,
                     :allow_lock_account,
                     :allow_unlock_account,
+                    :enable_google_authenticator_tfa,
                     :sign_up_mutation,
                     :update_account_mutation
 
@@ -26,6 +27,9 @@ module GraphQL
         # Allow custom mutations for signup and update account
         @sign_up_mutation = '::Mutations::Auth::SignUp'
         @update_account_mutation = '::Mutations::Auth::UpdateAccount'
+        
+        # Two-factor authentication
+        @enable_google_authenticator_tfa = false
       end
     end
   end

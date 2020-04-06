@@ -10,4 +10,8 @@ class Types::Auth::User < GraphQL::Schema::Object
   field :email, String, null: false do
     description 'Email address of the user'
   end
+  
+  field :google_label, String, null: true do
+    description 'Google label for Authenticator'
+  end
 end

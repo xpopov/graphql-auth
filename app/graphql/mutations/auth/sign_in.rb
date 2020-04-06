@@ -11,6 +11,10 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
   argument :password, String, required: true do
     description "The user's password"
   end
+  
+  argument :google_authenticator_code, String, required: false do
+    description "Code from Google Authenticator if two-factor authentication is enabled"
+  end
 
   argument :remember_me, Boolean, required: false do
     description "User's checkbox to be remembered after connection timeout"
@@ -20,7 +24,7 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
   field :success, Boolean, null: false
   field :user, GraphQL::Auth.configuration.user_type.constantize, null: true
 
-  def resolve(email:, password:, remember_me:)
+  def resolve(email:, password:, remember_me:, google_authenticator_code:)
     response = context[:response]
 
     if lockable?
@@ -28,8 +32,21 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
     else
       user = User.find_by email: email
     end
+    
+    error_message = nil
 
     valid_sign_in = user.present? && user.valid_password?(password)
+    
+    if user.present? && !user.valid_password?(password)
+      error_message = 'Password is not valid'
+    end
+    
+    if valid_sign_in && GraphQL::Auth.configuration.enable_google_authenticator_tfa
+      valid_sign_in = verify_google_code(user, google_authenticator_code)
+      if !valid_sign_in
+        error_message = 'Google Authenticator code is not valid'
+      end
+    end
 
     if valid_sign_in
       generate_access_token(user, response)
@@ -43,8 +60,8 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
         user: user
       }
     else
-      if user.present? && !user.valid_password?(password)
-        devise_failure(user.email, 'Password is not valid')
+      if error_message.present?
+        devise_failure(user.email, error_message)
       end
       {
         errors: [

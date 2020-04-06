@@ -24,6 +24,7 @@ class Mutations::Auth::SignUp < GraphQL::Schema::Mutation
     user = User.new args
 
     if user.save
+      set_google_secret(user) if GraphQL::Auth.configuration.enable_google_authenticator_tfa
       generate_access_token(user, response)
       devise_sign_in(user)
 

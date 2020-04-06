@@ -8,8 +8,9 @@ module Graphql
     include ::Graphql::TokenHelper
 
     def context
+      @_current_user = @_current_user || current_user
       {
-        current_user: current_user,
+        current_user: @_current_user,
         response: response,
         request: request
       }
@@ -35,6 +36,7 @@ module Graphql
       else
         return nil# user.blank?
       end
+      @_current_user = user
       
       # update token if user is found with token
       generate_access_token(user, response)

@@ -16,6 +16,7 @@ module Graphql
     end
     
     def devise_failure(email, reason)
+      request = context[:request]
       request.params[:user] = { email: email }
       opts = { message: reason, scope: :user }
       Warden::Manager._run_callbacks(:before_failure, request.env, opts)

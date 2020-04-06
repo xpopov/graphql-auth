@@ -26,6 +26,7 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
 
   def resolve(email:, password:, remember_me:, google_authenticator_code:)
     response = context[:response]
+    request = context[:request]
 
     if lockable?
       user = User.where(locked_at: nil).find_by email: email

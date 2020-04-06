@@ -10,7 +10,8 @@ module Graphql
     def context
       {
         current_user: current_user,
-        response: response
+        response: response,
+        request: request
       }
     end
 

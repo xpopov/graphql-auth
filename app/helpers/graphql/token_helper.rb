@@ -14,7 +14,7 @@ module Graphql
       # sign in via devise whenever we log in
       # sign_in(user, scope: :user)
       request = context[:request]
-      opts = { scope: :user }
+      opts = { scope: :user, event: :authentication }
       Warden::Manager._run_callbacks(:after_set_user, user, request, opts)
     end
     

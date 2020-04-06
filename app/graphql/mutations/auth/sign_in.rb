@@ -39,7 +39,8 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
     valid_sign_in = user.present? && user.valid_password?(password)
     
     if user.present? && !user.valid_password?(password)
-      error_message = 'Password is not valid'
+      error_message = I18n.t('devise.failure.invalid',
+                                authentication_keys: I18n.t('activerecord.attributes.user.email', default: 'email'))
     end
     
     if valid_sign_in && GraphQL::Auth.configuration.enable_google_authenticator_tfa
@@ -68,8 +69,7 @@ class Mutations::Auth::SignIn < GraphQL::Schema::Mutation
         errors: [
           {
             field: :_error,
-                message: I18n.t('devise.failure.invalid',
-                                authentication_keys: I18n.t('activerecord.attributes.user.email', default: 'email'))
+                message: error_message
           }
         ],
         success: false,
